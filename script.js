@@ -246,26 +246,33 @@ function handleGimmick(q) {
 // 芋虫
 document.getElementById('caterpillar').addEventListener('click', () => {
     actionLog.bugSquish++;
-    scores.T8 += 2;
     squishCount++;
     const speech = document.querySelector('.bug-speech');
     const caterpillarObj = document.getElementById('caterpillar');
     
+    // スケール変更で徐々に縮小する演出
     caterpillarObj.style.transform = `scale(${1 - (squishCount * 0.03)})`;
 
     if (squishCount >= 30) {
+        // 完全に潰した瞬間に撃破ボーナスでドカンと加点！
+        scores.T8 += 8; 
+        
         speech.innerText = "ギャアアア！";
         speech.classList.remove('hidden');
         caterpillarObj.querySelector('.bug-icon').innerText = '💥';
         setTimeout(() => { caterpillarObj.style.display = 'none'; }, 1000);
     } else {
+        // 通常タップは5回に1回だけ「1」加点（12回タップで「2」しか増えません）
+        if (squishCount % 5 === 0) {
+            scores.T8 += 1;
+        }
+        
         const localBugSpeeches = ["SLEか？やめろ！", "…構造が崩れる。", "無意味な干渉だ。", "…T8ログを加算。", "破壊衝動か。"];
         speech.innerText = localBugSpeeches[Math.floor(Math.random() * localBugSpeeches.length)];
         speech.classList.remove('hidden');
         setTimeout(() => { speech.classList.add('hidden'); }, 1500);
     }
 });
-
 // 【バグ防止】すべての計算をこの一箇所だけで処理し、キャッシュする
 function compileResults() {
     const allSorted = Object.keys(scores).sort((a,b)=>scores[b]-scores[a]);
