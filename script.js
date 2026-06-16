@@ -275,7 +275,7 @@ document.getElementById('caterpillar').addEventListener('click', () => {
 });
 // 【バグ防止】すべての計算をこの一箇所だけで処理し、キャッシュする
 function compileResults() {
-    const allSorted = Object.keys(scores).sort((a,b)=>scores[b]-scores[a]);
+    const allSorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const baseType = allSorted[0];
     const bNum = parseInt(baseType[1]);
     
@@ -283,22 +283,27 @@ function compileResults() {
     const w2 = bNum === 9 ? 1 : bNum + 1;
     const calcWing = scores["T"+w1] > scores["T"+w2] ? "T"+w1 : "T"+w2;
 
-    const headMax = [...headTypes].sort((a,b)=>scores[b]-scores[a])[0];
-    const heartMax = [...heartTypes].sort((a,b)=>scores[b]-scores[a])[0];
-    const gutMax = [...gutTypes].sort((a,b)=>scores[b]-scores[a])[0];
+    const headTypes = ['T5','T6','T7'];
+    const heartTypes = ['T2','T3','T4'];
+    const gutTypes = ['T8','T9','T1'];
 
-    let tri1, tri2, triLast;
+    // 【重要バグ修正】トライタイプの1番目は強制的にベースタイプにする！
+    let tri1 = baseType;
+    let tri2, triLast;
     
     if (headTypes.includes(baseType)) {
-        tri1 = headMax;
+        const heartMax = [...heartTypes].sort((a,b)=>scores[b]-scores[a])[0];
+        const gutMax = [...gutTypes].sort((a,b)=>scores[b]-scores[a])[0];
         const sub = [heartMax, gutMax].sort((a,b)=>scores[b]-scores[a]);
         tri2 = sub[0]; triLast = sub[1];
     } else if (heartTypes.includes(baseType)) {
-        tri1 = heartMax;
+        const headMax = [...headTypes].sort((a,b)=>scores[b]-scores[a])[0];
+        const gutMax = [...gutTypes].sort((a,b)=>scores[b]-scores[a])[0];
         const sub = [headMax, gutMax].sort((a,b)=>scores[b]-scores[a]);
         tri2 = sub[0]; triLast = sub[1];
     } else {
-        tri1 = gutMax;
+        const headMax = [...headTypes].sort((a,b)=>scores[b]-scores[a])[0];
+        const heartMax = [...heartTypes].sort((a,b)=>scores[b]-scores[a])[0];
         const sub = [headMax, heartMax].sort((a,b)=>scores[b]-scores[a]);
         tri2 = sub[0]; triLast = sub[1];
     }
@@ -314,7 +319,7 @@ function compileResults() {
     };
 }
 
-// GAS送信関数 (みつき専用のURLを埋め込み済み)
+// GAS送信関数
 function sendDataToGAS(calculatedType, strength) {
     const gasURL = "https://script.google.com/macros/s/AKfycbxv5kGEPjHsR1sCcEyJkykbPtzz8TOGtfK6Put0WnnQkUfj_Mr7bhykXNnb0WlPcrmw/exec";
     const secretText = document.getElementById('secret-textarea').value || "（未記入）";
@@ -356,12 +361,14 @@ function startResultLoading() {
     const orderPattern = `${subTypes[0].role}_${subTypes[1].role}_${subTypes[2].role}`;
 
     let strengthTitle = "";
-    if(orderPattern === "ウィング_トライ2_トライ3") strengthTitle = "【ひみつ強度：高】絶対防衛のねじれ";
-    else if(orderPattern === "ウィング_トライ3_トライ2") strengthTitle = "【ひみつ強度：中】漏洩する欲求のねじれ";
-    else if(orderPattern === "トライ2_ウィング_トライ3") strengthTitle = "【ひみつ強度：極高】過剰武装のねじれ";
-    else if(orderPattern === "トライ2_トライ3_ウィング") strengthTitle = "【ひみつ強度：警戒】暴走する自我のねじれ";
-    else if(orderPattern === "トライ3_ウィング_トライ2") strengthTitle = "【ひみつ強度：低】崩壊寸前のねじれ";
-    else strengthTitle = "【ひみつ強度：システムエラー】無防備な渇望";
+    if (computedData.calcWing === computedData.tri2 || computedData.calcWing === computedData.triLast) {
+        strengthTitle = "【ひみつ強度：特異点】過剰濃縮のダブルフィックス";
+    } else {
+        if(orderPattern === "ウィング_トライ2_トライ3") strengthTitle = "【ひみつ強度：高】絶対防衛のねじれ";
+        else if(orderPattern === "トライ2_ウィング_トライ3") strengthTitle = "【ひみつ強度：極高】過剰武装のねじれ";
+        else if(orderPattern === "トライ2_トライ3_ウィング") strengthTitle = "【ひみつ強度：警戒】防衛崩壊のねじれ";
+        else strengthTitle = "【ひみつ強度：システムエラー】無防備な渇望";
+    }
 
     // 2. ローディング中に、計算結果と行動データをGASに裏送信する！
     sendDataToGAS(`${computedData.baseType}w${computedData.calcWing[1]} / ${computedData.calcTriStr}`, strengthTitle);
@@ -391,7 +398,6 @@ function showResult() {
     const orderPattern = `${subTypes[0].role}_${subTypes[1].role}_${subTypes[2].role}`;
     const orderNumbers = `${subTypes[0].type.replace('T','')} ＞ ${subTypes[1].type.replace('T','')} ＞ ${subTypes[2].type.replace('T','')}`;
 
-// --- ↓ここから追加・変更↓ ---
     let strengthTitle = "";
     let strengthDesc = "";
 
@@ -406,7 +412,6 @@ function showResult() {
         strengthTitle = "【ひみつ強度：特異点】過剰濃縮のダブルフィックス";
         strengthDesc = `防衛線（ウィング）と最深欲求（トライタイプ）が「${doubleTypeName}」という同一の要素で完全に被っています。逃げるための防衛と、求めるための欲求が同じ場所に向かっている、逃げ場のない極度に濃縮された特異な構造です。`;
     } else {
-        // --- 従来の3パターン判定 ---
         switch(orderPattern) {
             case "ウィング_トライ2_トライ3":
                 strengthTitle = "【ひみつ強度：高】絶対防衛のねじれ";
@@ -448,7 +453,6 @@ function showResult() {
             </div>
         `;
     } else {
-        // --- 従来の矛盾テキスト ---
         document.getElementById('result-title').innerText = `矛盾するベクトルの衝突`;
         document.getElementById('result-description').innerHTML = `
             <div style="margin-bottom:20px; border-bottom:1px dashed #ccc; padding-bottom:15px;">
@@ -495,7 +499,7 @@ document.getElementById('copy-log-btn').addEventListener('click', () => {
     }).catch(err => { alert("コピーに失敗しました。"); });
 });
 
-// 共有用
+// ナビゲーション共有
 document.getElementById('share-btn').addEventListener('click', () => {
     const calculatedType = document.getElementById('result-calculated-type').innerText;
     const strength = document.getElementById('secret-strength-title').innerText;
@@ -512,6 +516,7 @@ document.getElementById('share-btn').addEventListener('click', () => {
     }
 });
 
+// 画像保存 (html2canvas)
 document.getElementById('save-img-btn').addEventListener('click', () => {
     window.scrollTo(0, 0);
     html2canvas(document.getElementById('capture-area'), { backgroundColor: "#f4ebd0", scale: 2 }).then(canvas => {
