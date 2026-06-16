@@ -62,23 +62,30 @@
         <div class="antique-box">
             <h1>Secret Book</h1>
             <h2>- ひみつのねじれ観測 -</h2>
+            
+            <!-- 診断の概要説明（独自理論の宣言を強化！） -->
             <div style="background: rgba(255, 255, 255, 0.5); padding: 15px; border: 1px solid var(--gold); border-radius: 5px; margin-bottom: 20px; text-align: left; font-size: 0.9rem; line-height: 1.5;">
-                <p style="margin-top:0;"><strong>【この観測システムについて】</strong></p>
-                <p>エニアグラムをベースに、あなたが無意識に張る<strong>「ウィング（防衛線）」</strong>と、心の奥底に沈めた<strong>「トライタイプの最後（最深の欲求）」</strong>のスコアを計測し、心の中で起こっている矛盾（ねじれ）を暴き出す診断です。</p>
-                <p style="margin-bottom:0;">選択の迷いや行動ログから、巧妙に隠蔽された「本当の本音」を抽出します。</p>
+                <p style="margin-top:0; color:var(--accent-color);"><strong>【当システムの観測理論について】</strong></p>
+                <p>当診断は一般的なエニアグラムの枠を超えた、<strong>作者独自の解釈に基づく心理観測実験</strong>です。</p>
+                <ul style="padding-left: 20px; margin-bottom: 10px;">
+                    <li><strong>ウィング（影）：</strong>現在よく使っている表層の防衛・ペルソナ</li>
+                    <li><strong>トライ最後（光）：</strong>普段は隠しているが、本当は満たされたい最深部の欲求</li>
+                </ul>
+                <p style="margin-bottom:0;">この2つのスコアの落差と行動ログから、あなたが抱える「見てほしい、でも怖い」といった矛盾（ねじれ）を暴き出します。</p>
             </div>
+            
             <!-- 荒らし対策：防衛プロトコル警告文 -->
             <div class="defense-protocol">
                 <h4><i class="fa-solid fa-shield-halved"></i> 【防衛プロトコル：被験者への警告】</h4>
-                <p>当システムは、案内人（🥺）および監視オブジェクト（🐛）が常時稼働する独自の実験空間です。システム固有の「世界観」や「演出」に対する理不尽な不快感を示す脆弱な被験者は、この先に進むことを固くお断りします。スライダーに触れず、今すぐブラウザを閉じて退避してください。</p>
+                <p>当システムは、案内人のアリス（🥺）および監視オブジェクト（🐛）が常時稼働する独自の実験空間であり、一般的な類型論の定義に縛られるものではありません。システム固有の「世界観」「演出」「解釈」に対する野暮なツッコミや理不尽な不快感を示す脆弱な被験者は、この先に進むことを固くお断りします。スライダーに触れず、今すぐ回れ右して退避してください。</p>
             </div>
             
             <div class="input-group">
-                <label>【任意】自認タイプ</label>
+                <label>【任意】自認タイプ（ウィング・トライタイプ等）</label>
                 <input type="text" id="user-type" placeholder="例: INTJ, 5w6, △513, LII等">
             </div>
 
-            <p class="lock-instruction">※上記のプロトコルに同意できる場合のみ、スライダーを動かして解錠してください。</p>
+            <p class="lock-instruction">※上記のプロトコルおよび独自理論に同意できる場合のみ、スライダーを動かして解錠してください。</p>
             <div class="slider-container">
                 <i class="fa-solid fa-lock" id="lock-icon"></i>
                 <input type="range" id="key-slider" min="0" max="100" value="0">
