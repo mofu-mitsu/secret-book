@@ -391,6 +391,7 @@ function showResult() {
     const orderPattern = `${subTypes[0].role}_${subTypes[1].role}_${subTypes[2].role}`;
     const orderNumbers = `${subTypes[0].type.replace('T','')} ＞ ${subTypes[1].type.replace('T','')} ＞ ${subTypes[2].type.replace('T','')}`;
 
+// --- ↓ここから追加・変更↓ ---
     let strengthTitle = "";
     let strengthDesc = "";
 
@@ -399,61 +400,73 @@ function showResult() {
     const t1Name = typeNames[subTypes[1].type];
     const t2Name = typeNames[subTypes[2].type];
 
-    switch(orderPattern) {
-        case "ウィング_トライ2_トライ3":
-            strengthTitle = "【ひみつ強度：高】絶対防衛のねじれ";
-            strengthDesc = `日常的な防衛ラインである「${t0Name}」が最も分厚く、外界を強く警戒しています。「${t1Name}」をサブ武器としつつ、最深部の本当の欲求である「${t2Name}」はシステム深部に完全に隠蔽されている、最も秘密が頑丈な構造です。`;
-            break;
-        case "ウィング_トライ3_トライ2":
-            strengthTitle = "【ひみつ強度：中】漏洩する欲求のねじれ";
-            strengthDesc = `「${t0Name}」で徹底的に防衛を張っているつもりですが、実は隠すべき最深欲求「${t1Name}」がすぐ後ろまで迫っており、時折その本音がバグとして漏れ出ているツンデレ状態です。`;
-            break;
-        case "トライ2_ウィング_トライ3": // みつきのパターン
-            strengthTitle = "【ひみつ強度：高】過剰武装のねじれ";
-            strengthDesc = `サブの自我として「${t0Name}」の理想や正しさを武器のように振りかざし、マイルールで世界に対抗しています。防衛（${t1Name}）すら凌駕する武装により、最深部の本当の弱点である「${t2Name}」には誰も触れられません。`;
-            break;
-        case "トライ2_トライ3_ウィング":
-            strengthTitle = "【ひみつ強度：警戒】暴走する自我のねじれ";
-            strengthDesc = `「${t2Name}」による防衛が追いついておらず、サブの自我である「${t0Name}」と最深欲求である「${t1Name}」が前面で衝突しています。葛藤のブレが表に露出しています。`;
-            break;
-        case "トライ3_ウィング_トライ2":
-            strengthTitle = "【ひみつ強度：低】崩壊寸前のねじれ";
-            strengthDesc = `一番隠蔽すべきだった最深部の欲求「${t0Name}」が、すでに防衛ラインを突破してダダ漏れになっています。本音を隠しているつもりなのは自分だけで、周りには筒抜けです。`;
-            break;
-        case "トライ3_トライ2_ウィング":
-            strengthTitle = "【ひみつ強度：システムエラー】無防備な渇望";
-            strengthDesc = `防衛システム「${t2Name}」が完全に機能不全を起こしています。一番奥底にあったはずの欲求「${t0Name}」のままに行動してしまい、あなたの「ひみつ」は既に暴かれています。`;
-            break;
-        default:
-            strengthTitle = "【ひみつ強度：測定不能】複雑系バグ";
-            strengthDesc = `各スコアが拮抗しており、あなたの防衛システムは独自のバグを起こしています。`;
-            break;
+    // 【激レアギミック】ウィングとトライタイプが被った場合（ダブルフィックス）
+    if (computedData.calcWing === computedData.tri2 || computedData.calcWing === computedData.triLast) {
+        const doubleTypeName = typeNames[computedData.calcWing];
+        strengthTitle = "【ひみつ強度：特異点】過剰濃縮のダブルフィックス";
+        strengthDesc = `防衛線（ウィング）と最深欲求（トライタイプ）が「${doubleTypeName}」という同一の要素で完全に被っています。逃げるための防衛と、求めるための欲求が同じ場所に向かっている、逃げ場のない極度に濃縮された特異な構造です。`;
+    } else {
+        // --- 従来の3パターン判定 ---
+        switch(orderPattern) {
+            case "ウィング_トライ2_トライ3":
+                strengthTitle = "【ひみつ強度：高】絶対防衛のねじれ";
+                strengthDesc = `日常的な防衛ラインである「${t0Name}」が最も分厚く機能しており、外界を強く警戒しています。「${t1Name}」をサブ武器としつつ、最深部の本当の欲求である「${t2Name}」はシステム深部に完全に隠蔽されている、極めて強固で防衛的な構造です。`;
+                break;
+            case "トライ2_ウィング_トライ3":
+                strengthTitle = "【ひみつ強度：極高】過剰武装のねじれ";
+                strengthDesc = `サブの自我として「${t0Name}」を武器のように振りかざし、マイルールで世界に対抗しています。本来の防衛（${t1Name}）すら凌駕する武装により、最深部の本当の弱点である「${t2Name}」には誰も触れることができません。`;
+                break;
+            case "トライ2_トライ3_ウィング":
+                strengthTitle = "【ひみつ強度：警戒】防衛崩壊のねじれ";
+                strengthDesc = `「${t2Name}」による防衛ラインが後手に回り、サブの自我である「${t0Name}」と、本来隠すべき最深欲求「${t1Name}」が前面に露出しています。本音を隠しきれておらず、行動の矛盾や葛藤のブレが表に漏れ出ている状態です。`;
+                break;
+            default:
+                strengthTitle = "【ひみつ強度：測定不能】複雑系バグ";
+                strengthDesc = `スコアが同点で拮抗しており、あなたの防衛システムは解析不能なバグを起こしています。`;
+                break;
+        }
     }
 
     document.getElementById('secret-strength-title').innerText = strengthTitle;
     document.getElementById('secret-order-text').innerText = `内部強度: [ ${orderNumbers} ]`;
     document.getElementById('secret-strength-desc').innerText = strengthDesc;
 
-    // 【豪華ねじれ詳細文の完全復活！】
     const sData = enneaData[computedData.calcWing];
     const lData = enneaData[computedData.triLast];
-    document.getElementById('result-title').innerText = `矛盾するベクトルの衝突`;
-    document.getElementById('result-description').innerHTML = `
-        <div style="margin-bottom:20px; border-bottom:1px dashed #ccc; padding-bottom:15px;">
-            <strong style="color:var(--accent-color); font-size:1.15rem;"><i class="fa-solid fa-shield-halved"></i> 【影の防衛ベクトル】（ウィング：${computedData.calcWing} / ${sData.name}）</strong><br>
-            <p style="margin-top:5px; font-size:0.95rem; line-height:1.5;">
-                あなたは、自分の最も深い恐怖である「<strong>${sData.fear}</strong>」から心を守るため、無意識に「<strong>${sData.desire}</strong>」への執着として防衛線を張っています。<br>
-                ${sData.shadow}
-            </p>
-        </div>
-        <div>
-            <strong style="color:#228b22; font-size:1.15rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> 【光の欲求ベクトル】（トライ最後：${computedData.triLast} / ${lData.name}）</strong><br>
-            <p style="margin-top:5px; font-size:0.95rem; line-height:1.5;">
-                しかし、心の最深部（トライタイプの末尾）に隠したあなたの真の本音は、「<strong>${lData.desire}</strong>」を満たしたいという、ひみつの欲求です。<br>
-                ${lData.light}
-            </p>
-        </div>
-    `;
+
+    // 【激レアギミック】詳細文も被り（特異点）専用に変更
+    if (computedData.calcWing === computedData.triLast) {
+        document.getElementById('result-title').innerText = `【${sData.name}】の無限ループバグ`;
+        document.getElementById('result-description').innerHTML = `
+            <div style="margin-bottom:20px; padding-bottom:15px;">
+                <strong style="color:var(--accent-color); font-size:1.15rem;"><i class="fa-solid fa-infinity"></i> 【防衛と欲求の完全一致】（過剰濃縮：${computedData.calcWing}）</strong><br>
+                <p style="margin-top:5px; font-size:0.95rem; line-height:1.5;">
+                    あなたのログはシステム上で特異なバグを起こしています。<br>
+                    「<strong>${sData.fear}</strong>」から心を守るために防衛線を張りますが、心の最深部にある欲求もまた「<strong>${sData.desire}</strong>」です。<br>
+                    逃げても逃げても同じ場所に辿り着く、逃げ場のないループ構造こそが、あなたの抱える最大の「ひみつ」です。
+                </p>
+            </div>
+        `;
+    } else {
+        // --- 従来の矛盾テキスト ---
+        document.getElementById('result-title').innerText = `矛盾するベクトルの衝突`;
+        document.getElementById('result-description').innerHTML = `
+            <div style="margin-bottom:20px; border-bottom:1px dashed #ccc; padding-bottom:15px;">
+                <strong style="color:var(--accent-color); font-size:1.15rem;"><i class="fa-solid fa-shield-halved"></i> 【影の防衛ベクトル】（ウィング：${computedData.calcWing} / ${sData.name}）</strong><br>
+                <p style="margin-top:5px; font-size:0.95rem; line-height:1.5;">
+                    あなたは、自分の最も深い恐怖である「<strong>${sData.fear}</strong>」から心を守るため、無意識に「<strong>${sData.desire}</strong>」への執着として防衛線を張っています。<br>
+                    ${sData.shadow}
+                </p>
+            </div>
+            <div>
+                <strong style="color:#228b22; font-size:1.15rem;"><i class="fa-solid fa-wand-magic-sparkles"></i> 【光の欲求ベクトル】（トライ最後：${computedData.triLast} / ${lData.name}）</strong><br>
+                <p style="margin-top:5px; font-size:0.95rem; line-height:1.5;">
+                    しかし、心の最深部（トライタイプの末尾）に隠したあなたの真の本音は、「<strong>${lData.desire}</strong>」を満たしたいという、ひみつの欲求です。<br>
+                    ${lData.light}
+                </p>
+            </div>
+        `;
+    }
 
     new Chart(document.getElementById('enneagramChart'), {
         type: 'bar',
