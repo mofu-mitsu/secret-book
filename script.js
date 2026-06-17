@@ -57,7 +57,7 @@ document.getElementById('start-btn').addEventListener('click', () => {
 
 document.getElementById('checkbox-next-btn').addEventListener('click', () => {
     document.querySelectorAll('#checkbox-container input:checked').forEach(chk => {
-        scores[chk.value] += 2;
+        scores[chk.value] += 3;
     });
     document.getElementById('checkbox-screen').classList.remove('active');
     document.getElementById('quiz-screen').classList.add('active');
@@ -127,16 +127,16 @@ function analyzeSecretText(text) {
     let scoreApplied = [];
 
     if (text.length === 0) {
-        scores.T5 += 3; scores.T9 += 3;
+        scores.T5 += 1; scores.T9 += 1;
         logMsg.push("無言・未記入（T5/T9的防衛）");
     } else {
-        if (text.length < 10) { scores.T5 += 2; logMsg.push("短文（T5的隠蔽）"); }
-        else if (text.length > 50) { scores.T4 += 2; scores.T1 += 2; logMsg.push("長文（T4/T1的自己主張）"); }
+        if (text.length < 10) { scores.T5 += 1; logMsg.push("短文（T5的隠蔽）"); }
+        else if (text.length > 50) { scores.T4 += 1; scores.T1 += 1; logMsg.push("長文（T4/T1的自己主張）"); }
 
         const kanjiCount = (text.match(/[一-龥]/g) || []).length;
         const hiraganaCount = (text.match(/[あ-ん]/g) || []).length;
-        if (kanjiCount > text.length * 0.4) { scores.T1 += 2; scores.T5 += 2; logMsg.push("高漢字率（T1/T5的論理武装）"); }
-        if (hiraganaCount > text.length * 0.6) { scores.T2 += 2; scores.T9 += 2; logMsg.push("高ひらがな率（T2/T9的親和・回避）"); }
+        if (kanjiCount > text.length * 0.4) { scores.T1 += 1; scores.T5 += 1; logMsg.push("高漢字率（T1/T5的論理武装）"); }
+        if (hiraganaCount > text.length * 0.6) { scores.T2 += 1; scores.T9 += 1; logMsg.push("高ひらがな率（T2/T9的親和・回避）"); }
 
         const keywordMap = {
             T1: ["正しい", "完璧", "ミス", "間違い", "ルール", "べき"],
@@ -147,7 +147,7 @@ function analyzeSecretText(text) {
             T6: ["不安", "安全", "怖い", "心配", "裏切り", "頼る"],
             T7: ["楽しい", "飽きる", "自由", "刺激", "退屈", "わくわく"],
             T8: ["支配", "コントロール", "弱い", "負ける", "怒り", "戦う"],
-            T9: ["平和", "合わせる", "穏やか", "対立", "どうでもいい", "めんどくさい"]
+            T9: ["平和", "合わせ", "穏やか", "対立", "どうでもいい", "めんどくさい"]
         };
 
         for (const [type, words] of Object.entries(keywordMap)) {
