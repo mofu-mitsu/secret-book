@@ -398,6 +398,17 @@ function showResult() {
     const orderPattern = `${subTypes[0].role}_${subTypes[1].role}_${subTypes[2].role}`;
     const orderNumbers = `${subTypes[0].type.replace('T','')} ＞ ${subTypes[1].type.replace('T','')} ＞ ${subTypes[2].type.replace('T','')}`;
 
+    // 【追加】ダーリンちゃんの煽りセリフ（自認とのズレを指摘）
+    let dSpeech = "";
+    if (selfTypeInput === "未入力") {
+        dSpeech = "あら、自認すら隠したの？ でも無駄よ。あなたの無意識のログは完全に丸裸だもの♡ ほな、これがアンタの『ひみつのねじれ』や。";
+    } else if (selfTypeInput.includes(computedData.baseType[1]) && selfTypeInput.includes(computedData.calcWing[1])) {
+        dSpeech = `ふふ、自己分析は完璧みたいね。防衛の自覚がある分、可愛げがないけど♡ ほな、これがアンタの『ひみつのねじれ』や。`;
+    } else {
+        dSpeech = `ふふ♡ 自認は『${selfTypeInput}』って言ってたけど、実際のログは『${computedData.baseType}w${computedData.calcWing[1]}』のバグだらけよ。自己認識という名の防衛バイアス、見事にひっぺがされたわね♡`;
+    }
+    document.getElementById('result-speech').innerText = dSpeech;
+
     let strengthTitle = "";
     let strengthDesc = "";
 
@@ -406,11 +417,9 @@ function showResult() {
     const t1Name = typeNames[subTypes[1].type];
     const t2Name = typeNames[subTypes[2].type];
 
-    // 【激レアギミック】ウィングとトライタイプが被った場合（ダブルフィックス）
     if (computedData.calcWing === computedData.tri2 || computedData.calcWing === computedData.triLast) {
-        const doubleTypeName = typeNames[computedData.calcWing];
         strengthTitle = "【ひみつ強度：特異点】過剰濃縮のダブルフィックス";
-        strengthDesc = `防衛線（ウィング）と最深欲求（トライタイプ）が「${doubleTypeName}」という同一の要素で完全に被っています。逃げるための防衛と、求めるための欲求が同じ場所に向かっている、逃げ場のない極度に濃縮された特異な構造です。`;
+        strengthDesc = `防衛線（ウィング）と最深欲求（トライタイプ）が「${typeNames[computedData.calcWing]}」という同一の要素で被っています。逃げ場のない極度に濃縮された特異な構造です。`;
     } else {
         switch(orderPattern) {
             case "ウィング_トライ2_トライ3":
@@ -427,14 +436,20 @@ function showResult() {
                 break;
             default:
                 strengthTitle = "【ひみつ強度：測定不能】複雑系バグ";
-                strengthDesc = `スコアが同点で拮抗しており、あなたの防衛システムは解析不能なバグを起こしています。`;
+                strengthDesc = `スコアが同点で拮抗しており、あなたの防衛システムは独自のバグを起こしています。`;
                 break;
         }
     }
 
+    // 【追加】自認と実測のズレについての補足説明をタイトル付近に注入
+    let discrepancyMsg = "";
+    if (selfTypeInput !== "未入力" && !selfTypeInput.includes(computedData.baseType[1])) {
+        discrepancyMsg = `<p style="font-size:0.85rem; color:#888; background:rgba(0,0,0,0.05); padding:8px; border-radius:5px; margin-bottom:15px; border-left:3px solid var(--accent-color);"><strong>【自認との解離について】</strong><br>入力された自認タイプと、行動ログ（迷った時間やギミックの選択）から算出された実測タイプに大きな乖離が見られます。これは、あなたが普段「こうありたい」と被っているペルソナと、無意識下で稼働している防衛システムが矛盾している証拠です。</p>`;
+    }
+
     document.getElementById('secret-strength-title').innerText = strengthTitle;
     document.getElementById('secret-order-text').innerText = `内部強度: [ ${orderNumbers} ]`;
-    document.getElementById('secret-strength-desc').innerText = strengthDesc;
+    document.getElementById('secret-strength-desc').innerHTML = strengthDesc + discrepancyMsg; // ここに注入！
 
     const sData = enneaData[computedData.calcWing];
     const lData = enneaData[computedData.triLast];
