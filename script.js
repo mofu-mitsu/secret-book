@@ -255,7 +255,7 @@ document.getElementById('caterpillar').addEventListener('click', () => {
 
     if (squishCount >= 30) {
         // 完全に潰した瞬間に撃破ボーナスでドカンと加点！
-        scores.T8 += 8; 
+        scores.T8 += 3; 
         
         speech.innerText = "ギャアアア！";
         speech.classList.remove('hidden');
